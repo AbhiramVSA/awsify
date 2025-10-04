@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/providers/AuthProvider";
 import { BookOpen, Plus, BarChart3, TrendingUp } from "lucide-react";
 
 interface Stats {
@@ -13,6 +14,7 @@ interface Stats {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [stats, setStats] = useState<Stats>({
     totalQuestions: 0,
     categories: [],
@@ -21,15 +23,18 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchStats();
-  }, []);
+    if (user) {
+      fetchStats(user.id);
+    }
+  }, [user]);
 
-  const fetchStats = async () => {
+  const fetchStats = async (userId: string) => {
     try {
       // Get total questions
       const { data: questions, error } = await supabase
         .from("mcq_questions")
-        .select("category, difficulty");
+        .select("category, difficulty")
+        .eq("user_id", userId);
 
       if (error) throw error;
 

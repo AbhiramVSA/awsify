@@ -1,9 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Plus, BookOpen, Info } from "lucide-react";
+import { Home, Plus, BookOpen, Info, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/providers/AuthProvider";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+  const { user } = useAuth();
 
   const navItems = [
     { path: "/", icon: Home, label: "Dashboard" },
@@ -11,6 +15,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     { path: "/quiz", icon: BookOpen, label: "Practice Quiz" },
     { path: "/about", icon: Info, label: "About" },
   ];
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -27,6 +35,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <p className="text-xs text-secondary-foreground/80">Master Your AWS Certification</p>
               </div>
             </div>
+            {user && (
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-sm font-medium">{user.email}</p>
+                  <p className="text-xs text-secondary-foreground/80">Your personal workspace</p>
+                </div>
+                <Button variant="outline" size="sm" onClick={handleSignOut} className="flex items-center gap-2">
+                  <LogOut className="w-4 h-4" />
+                  Sign out
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </header>

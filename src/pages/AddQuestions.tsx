@@ -9,9 +9,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Plus, Upload, CheckCircle2 } from "lucide-react";
+import { useAuth } from "@/providers/AuthProvider";
 
 const AddQuestions = () => {
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
   
   // Manual form state
   const [formData, setFormData] = useState({
@@ -47,6 +49,11 @@ const AddQuestions = () => {
 
   const handleManualSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!user) {
+      toast.error("Please sign in to add questions");
+      return;
+    }
     
     // Validation
     const options = [formData.option1, formData.option2, formData.option3, formData.option4];
@@ -70,6 +77,7 @@ const AddQuestions = () => {
         category: formData.category,
         difficulty: formData.difficulty,
         explanation: formData.explanation,
+        user_id: user.id,
       });
 
       if (error) throw error;
@@ -89,6 +97,9 @@ const AddQuestions = () => {
   const handleBulkUpload = async () => {
     setLoading(true);
     try {
+      if (!user) {
+        throw new Error("Please sign in to upload questions");
+      }
       const data = JSON.parse(bulkJson);
       
       if (!data.questions || !Array.isArray(data.questions)) {
@@ -110,6 +121,7 @@ const AddQuestions = () => {
           category: q.category,
           difficulty: q.difficulty,
           explanation: q.explanation,
+          user_id: user.id,
         };
       });
 

@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowRight, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/providers/AuthProvider";
 
 interface Question {
   id: string;
@@ -35,16 +36,20 @@ const Quiz = () => {
   const [answered, setAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    if (user) {
+      fetchCategories(user.id);
+    }
+  }, [user]);
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from("mcq_questions")
-        .select("category");
+        .select("category")
+        .eq("user_id", userId);
       
       if (error) throw error;
       
@@ -56,9 +61,13 @@ const Quiz = () => {
   };
 
   const startQuiz = async () => {
+    if (!user) {
+      toast.error("Please sign in to start a quiz");
+      return;
+    }
     setLoading(true);
     try {
-      let query = supabase.from("mcq_questions").select("*");
+      let query = supabase.from("mcq_questions").select("*").eq("user_id", user.id);
       
       if (selectedCategory !== "all") {
         query = query.eq("category", selectedCategory);

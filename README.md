@@ -1,73 +1,91 @@
-# Welcome to your Lovable project
+# AWS Cloud Architect Quiz App
 
-## Project info
+## About
 
-**URL**: https://lovable.dev/projects/9c8709bf-281f-4d14-8dc1-e0059166aa04
+An interactive quiz application for AWS Cloud Solutions Architect certification preparation. Practice with custom question banks, get instant feedback, and track your progress.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- 📚 Custom question bank management
+- 🎯 Category-based quiz filtering
+- 💯 Real-time scoring and feedback
+- 📊 Progress tracking
+- 🔄 Question difficulty levels (Easy, Medium, Hard)
+- 💾 Persistent storage with Supabase
 
-**Use Lovable**
+## Getting Started
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/9c8709bf-281f-4d14-8dc1-e0059166aa04) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-Follow these steps:
+### Installation
 
+1. Clone the repository:
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+git clone https://github.com/AbhiramVSA/cloud-architect-quiz.git
+cd cloud-architect-quiz
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. Install dependencies:
+```sh
+npm install
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. Set up environment variables:
+Create a `.env` file with your Supabase credentials:
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_key
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Apply database migrations to Supabase (via SQL Editor or CLI). With the Supabase CLI this is:
+```sh
+supabase db push
+```
+
+5. Start the development server:
+```sh
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will run at `http://localhost:8001`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Technologies Used
 
-**Use GitHub Codespaces**
+- **Frontend**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **UI Components**: shadcn/ui + Radix UI
+- **Styling**: Tailwind CSS
+- **Backend**: Supabase (PostgreSQL)
+- **State Management**: TanStack Query (React Query)
+- **Routing**: React Router v6
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Structure
 
-## What technologies are used for this project?
+```
+src/
+├── components/     # Reusable UI components
+├── pages/          # Page components (Dashboard, Quiz, etc.)
+├── integrations/   # Supabase client setup
+├── lib/            # Utility functions
+└── hooks/          # Custom React hooks
+```
 
-This project is built with:
+## Deployment
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Build for production:
+```sh
+npm run build
+```
 
-## How can I deploy this project?
+### Preview production build:
+```sh
+npm run preview
+```
 
-Simply open [Lovable](https://lovable.dev/projects/9c8709bf-281f-4d14-8dc1-e0059166aa04) and click on Share -> Publish.
+Deploy the `dist` folder to your preferred hosting service (Vercel, Netlify, etc.)
 
-## Can I connect a custom domain to my Lovable project?
+## License
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+MIT

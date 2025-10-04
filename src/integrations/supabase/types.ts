@@ -25,6 +25,7 @@ export type Database = {
           options: string[]
           question: string
           service_name: string
+          user_id: string
           updated_at: string
         }
         Insert: {
@@ -37,6 +38,7 @@ export type Database = {
           options: string[]
           question: string
           service_name: string
+          user_id?: string
           updated_at?: string
         }
         Update: {
@@ -49,9 +51,17 @@ export type Database = {
           options?: string[]
           question?: string
           service_name?: string
+          user_id?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "mcq_questions_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
