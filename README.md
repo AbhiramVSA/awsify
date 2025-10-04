@@ -21,6 +21,7 @@ An open-source, Supabase-backed study companion for AWS Solutions Architect cand
 
 - **Supabase Auth** – Email/password sign-in with per-user data isolation enforced at the database (RLS).
 - **Question Bank Management** – Add questions manually or bulk import JSON; everything is scoped to the signed-in user.
+- **Curated Starter Library** – Ships with an AWS Well-Architected question set that every user immediately sees when they sign in.
 - **Adaptive Quiz Flows** – Filter by AWS service, category, or difficulty; get instant scoring and explanations.
 - **shadcn/ui Foundations** – Responsive, accessible UI components styled with Tailwind CSS.
 - **Production-ready Build Pipeline** – Vite + React 18 + TypeScript with ESLint and SWC for fast feedback loops.

@@ -8,6 +8,7 @@ import { BookOpen, Plus, BarChart3, TrendingUp } from "lucide-react";
 
 interface Stats {
   totalQuestions: number;
+  personalQuestions: number;
   categories: { category: string; count: number }[];
   difficulties: { difficulty: string; count: number }[];
 }
@@ -17,6 +18,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState<Stats>({
     totalQuestions: 0,
+    personalQuestions: 0,
     categories: [],
     difficulties: [],
   });
@@ -33,23 +35,28 @@ const Dashboard = () => {
       // Get total questions
       const { data: questions, error } = await supabase
         .from("mcq_questions")
-        .select("category, difficulty")
-        .eq("user_id", userId);
+        .select("category, difficulty, user_id, is_global")
+        .or(`user_id.eq.${userId},is_global.eq.true`);
 
       if (error) throw error;
 
       if (questions) {
+        const rows = questions ?? [];
+
         // Calculate statistics
         const categoryMap = new Map<string, number>();
         const difficultyMap = new Map<string, number>();
 
-        questions.forEach((q) => {
+        rows.forEach((q) => {
           categoryMap.set(q.category, (categoryMap.get(q.category) || 0) + 1);
           difficultyMap.set(q.difficulty, (difficultyMap.get(q.difficulty) || 0) + 1);
         });
 
+        const personalQuestions = rows.filter((q) => q.user_id === userId).length;
+
         setStats({
-          totalQuestions: questions.length,
+          totalQuestions: rows.length,
+          personalQuestions,
           categories: Array.from(categoryMap.entries()).map(([category, count]) => ({
             category,
             count,
@@ -109,8 +116,13 @@ const Dashboard = () => {
               {loading ? "..." : stats.totalQuestions}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Questions in your database
+              Available questions (AWSify library + your collection)
             </p>
+            {!loading && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Your personal questions: <span className="font-semibold text-foreground">{stats.personalQuestions}</span>
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -176,12 +188,14 @@ const Dashboard = () => {
         </Card>
       )}
 
-      {/* Quick Actions */}
-      {stats.totalQuestions === 0 && !loading && (
+      {/* Encourage adding personal questions */}
+      {stats.personalQuestions === 0 && !loading && (
         <Card className="border-primary/20">
           <CardHeader>
             <CardTitle>Get Started</CardTitle>
-            <CardDescription>No questions yet. Add your first question to begin practicing!</CardDescription>
+            <CardDescription>
+              You have access to the AWSify starter library. Add your first custom question to tailor the quiz to your needs.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Button

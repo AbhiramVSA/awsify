@@ -25,8 +25,9 @@ export type Database = {
           options: string[]
           question: string
           service_name: string
-          user_id: string
+          user_id: string | null
           updated_at: string
+          is_global: boolean
         }
         Insert: {
           category: string
@@ -38,8 +39,9 @@ export type Database = {
           options: string[]
           question: string
           service_name: string
-          user_id?: string
+          user_id?: string | null
           updated_at?: string
+          is_global?: boolean
         }
         Update: {
           category?: string
@@ -51,8 +53,9 @@ export type Database = {
           options?: string[]
           question?: string
           service_name?: string
-          user_id?: string
+          user_id?: string | null
           updated_at?: string
+          is_global?: boolean
         }
         Relationships: [
           {

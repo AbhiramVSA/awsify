@@ -78,6 +78,7 @@ const AddQuestions = () => {
         difficulty: formData.difficulty,
         explanation: formData.explanation,
         user_id: user.id,
+        is_global: false,
       });
 
       if (error) throw error;
@@ -122,6 +123,7 @@ const AddQuestions = () => {
           difficulty: q.difficulty,
           explanation: q.explanation,
           user_id: user.id,
+          is_global: false,
         };
       });
 

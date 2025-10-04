@@ -20,6 +20,8 @@ interface Question {
   category: string;
   difficulty: string;
   explanation: string;
+  user_id?: string | null;
+  is_global?: boolean;
 }
 
 const Quiz = () => {
@@ -49,11 +51,11 @@ const Quiz = () => {
       const { data, error } = await supabase
         .from("mcq_questions")
         .select("category")
-        .eq("user_id", userId);
+        .or(`user_id.eq.${userId},is_global.eq.true`);
       
       if (error) throw error;
       
-      const uniqueCategories = [...new Set(data.map(q => q.category))];
+  const uniqueCategories = [...new Set((data ?? []).map((q) => q.category))];
       setCategories(uniqueCategories);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -67,7 +69,10 @@ const Quiz = () => {
     }
     setLoading(true);
     try {
-      let query = supabase.from("mcq_questions").select("*").eq("user_id", user.id);
+      let query = supabase
+        .from("mcq_questions")
+        .select("*")
+        .or(`user_id.eq.${user.id},is_global.eq.true`);
       
       if (selectedCategory !== "all") {
         query = query.eq("category", selectedCategory);
