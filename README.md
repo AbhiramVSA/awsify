@@ -1,147 +1,75 @@
-# AWSify – AWS Architect Quiz Platform
+<p align="center">
+  <img src="assets/awsify-mark.svg" alt="Cloud outline above a quiz card with an answer mark" width="112" />
+</p>
 
-An open-source, Supabase-backed study companion for AWS Solutions Architect candidates. Build a personal cloud question bank, practice with curated quizzes, and track progress in a polished React experience.
+<h1 align="center">AWSify</h1>
 
----
+<p align="center">A quiz app for AWS Solutions Architect study, with sign-in, personal questions, and practice by category and difficulty.</p>
 
-## Table of Contents
+<p align="center">
+  <a href="#what-you-can-do">Features</a> ·
+  <a href="#run-locally">Run locally</a> ·
+  <a href="#data-and-auth">Data and auth</a> ·
+  <a href="#license">License</a>
+</p>
 
-1. [Highlights](#highlights)
-2. [Architecture & Tech Stack](#architecture--tech-stack)
-3. [Quick Start](#quick-start)
-4. [Environment Configuration](#environment-configuration)
-5. [Database Migrations](#database-migrations)
-6. [Available Scripts](#available-scripts)
-7. [Project Structure](#project-structure)
-8. [Contributing](#contributing)
-9. [Roadmap](#roadmap)
-10. [License](#license)
+## What you can do
 
-## Highlights
+- Create questions by hand or import them from a JSON file.
+- Build a quiz from the available categories and difficulty levels.
+- Submit answers and view the score and explanations.
+- Sign in with an email and password.
 
-- **Supabase Auth** – Email/password sign-in with per-user data isolation enforced at the database (RLS).
-- **Question Bank Management** – Add questions manually or bulk import JSON; everything is scoped to the signed-in user.
-- **Curated Starter Library** – Ships with an AWS Well-Architected question set that every user immediately sees when they sign in.
-- **Adaptive Quiz Flows** – Filter by AWS service, category, or difficulty; get instant scoring and explanations.
-- **shadcn/ui Foundations** – Responsive, accessible UI components styled with Tailwind CSS.
-- **Production-ready Build Pipeline** – Vite + React 18 + TypeScript with ESLint and SWC for fast feedback loops.
+The Supabase migrations include a shared starter question set and policies for personal questions.
 
-## Architecture & Tech Stack
+## Run locally
 
-| Layer          | Details                                      |
-|----------------|----------------------------------------------|
-| Frontend       | React 18, TypeScript, Vite 5                 |
-| UI Components  | shadcn/ui, Radix UI, Tailwind CSS            |
-| State/Data     | TanStack Query, React Hook Form, Zod         |
-| Authentication | Supabase Auth (email/password)               |
-| Persistence    | Supabase PostgreSQL with row-level security  |
-| Tooling        | ESLint, SWC, PostCSS, Tailwind CLI           |
+**Requirements:** Node.js and npm, plus a Supabase project.
 
-### Flow Overview
-
-1. Users authenticate via Supabase, establishing a session handled by `AuthProvider`.
-2. Authenticated pages call Supabase using service-generated types for safety.
-3. All question CRUD operations include the `user_id`; database RLS guarantees tenant isolation.
-4. Supabase migrations (SQL) define schema, triggers, and PostgREST refresh for cache consistency.
-
-## Quick Start
-
-### Prerequisites
-
-- Node.js ≥ 18.x and npm ≥ 9.x ([nvm install guide](https://github.com/nvm-sh/nvm#installing-and-updating))
-- Supabase project with SQL editor or CLI access
-
-### Setup
-
-```sh
+```bash
 git clone https://github.com/AbhiramVSA/awsify.git
 cd awsify
 npm install
-cp .env.example .env               # if you track an example file
-# populate the environment variables listed below
-supabase db push                   # apply schema & policies to your Supabase instance
-npm run dev
 ```
 
-Visit the application at **http://localhost:8001**.
-
-## Environment Configuration
-
-Create a `.env` file in the project root with your Supabase credentials:
+Create a root `.env.local` file with the public Supabase project URL and publishable key:
 
 ```env
-VITE_SUPABASE_URL=your-project-url
-VITE_SUPABASE_PUBLISHABLE_KEY=your-anon-key
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 ```
 
-> Retrieve these values from the Supabase dashboard under **Project Settings → API**.
+Install the [Supabase CLI](https://supabase.com/docs/guides/cli) separately, then link your project and apply the migrations:
 
-## Database Migrations
-
-Migrations live under `supabase/migrations/` and should be applied before running the app.
-
-### Using Supabase CLI (recommended)
-
-```sh
+```bash
+supabase link --project-ref your-project-ref
 supabase db push
 ```
 
-This command:
+Start the Vite development server:
 
-- Creates the `mcq_questions` table, indexes, and timestamp trigger.
-- Adds the `user_id` column with a foreign key to `auth.users`.
-- Installs row-level security (RLS) policies limiting reads/writes to the current user.
-- Triggers a PostgREST schema cache reload so the new columns are immediately available to the API.
-
-### Without the CLI
-
-Copy the SQL files from `supabase/migrations/` into the Supabase SQL editor and run them in order by timestamp.
-
-## Available Scripts
-
-| Command             | Description                                              |
-|---------------------|----------------------------------------------------------|
-| `npm run dev`       | Start Vite dev server on port 8001 with hot reload        |
-| `npm run build`     | Create an optimized production build                     |
-| `npm run build:dev` | Build using development mode (useful for debugging)      |
-| `npm run preview`   | Preview the production build locally                     |
-| `npm run lint`      | Run ESLint across the project                            |
-
-> Tests are not yet implemented. Contributions that introduce unit or integration tests are welcome.
-
-## Project Structure
-
-```
-src/
-├── components/      # Reusable UI primitives (shadcn/ui)
-├── hooks/           # Custom hooks (auth, mobile detection, toasts)
-├── integrations/    # Supabase client + typed schema definitions
-├── pages/           # Route-level screens (Dashboard, Quiz, Login, etc.)
-├── providers/       # React context providers (AuthProvider)
-└── lib/             # Utilities shared across the app
+```bash
+npm run dev
 ```
 
-## Contributing
+Open <http://localhost:8001>.
 
-We welcome community contributions. To get started:
+## Data and auth
 
-1. **Fork** the repository and clone your fork.
-2. Create a feature branch (`git checkout -b feature/amazing-idea`).
-3. Write clear, conventional commits (`feat: …`, `fix: …`, etc.).
-4. Ensure `npm run lint` and `npm run build` both succeed.
-5. Open a pull request describing your change and referencing any related issues.
+The browser app uses Supabase Auth and the `mcq_questions` table. The migrations in `supabase/migrations/` define that table, row-level security policies, and the shared starter questions. Apply these migrations before you use the app.
 
-Please open an issue before embarking on substantial work so we can coordinate efforts.
+The app uses the Supabase publishable key in browser code. Do not put a service-role key in the Vite environment.
 
-## Roadmap
+## Development commands
 
-- [ ] Add unit tests for Supabase data hooks and quiz state transitions.
-- [ ] Support question tagging and advanced filtering.
-- [ ] Implement spaced-repetition practice mode.
-- [ ] Add CI workflow (GitHub Actions) for lint/build/test automation.
-
-Have an idea? Open an issue and let’s discuss it.
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Start the Vite development server on port `8001`. |
+| `npm run build` | Create a production build in `dist/`. |
+| `npm run build:dev` | Create a development-mode build. |
+| `npm run lint` | Run ESLint. |
+| `npm run preview` | Preview the build locally. |
 
 ## License
 
-This project is licensed under the **MIT License**. See [`LICENSE`](./LICENSE) for details.
+This project uses the [MIT License](LICENSE).
