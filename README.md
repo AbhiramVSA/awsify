@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/awsify-mark.svg" alt="Cloud outline above a quiz card with an answer mark" width="112" />
+  <img src="assets/awsify-logo.png" alt="Cloud deployment arrow connected to infrastructure blocks" width="200" />
 </p>
 
 <h1 align="center">AWSify</h1>
